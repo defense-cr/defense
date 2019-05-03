@@ -1,0 +1,17 @@
+name: defense
+version: 0.1.0
+
+authors:
+  - Florin Lipan <florinlipan@gmail.com>
+  - Rodrigo Pinto <contato@rodrigopinto.me>
+
+crystal: 0.28.0
+
+dependencies:
+  redis:
+    github: stefanwille/crystal-redis
+
+development_dependencies:
+  sentry:
+    github: samueleaton/sentry
+    branch: master

@@ -1,0 +1,14 @@
+version: 1.0
+shards:
+  pool:
+    github: ysbaddaden/pool
+    version: 0.2.3
+
+  redis:
+    github: stefanwille/crystal-redis
+    version: 2.1.1
+
+  sentry:
+    github: samueleaton/sentry
+    commit: 64b6931424f50dd070158d56a8ad50d8efc557a3
+
