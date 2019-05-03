@@ -27,6 +27,27 @@ describe "Defense.throttle" do
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
   end
 
+  it "matches a matching request" do
+    request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
+    response = HTTP::Server::Response.new(IO::Memory.new)
+
+    Defense.throttle("my-throttle-rule", limit: 1, period: 100) { |req, res| req.headers["user-agent"]? }
+
+    ctx = HTTP::Server::Context.new(request, response)
+    handler = Defense::Handler.new
+    handler.next = ->(ctx : HTTP::Server::Context) {}
+
+    handler.call(ctx)
+    ctx.response.status.should eq(HTTP::Status::OK)
+
+    handler.call(ctx)
+    ctx.response.status.should eq(HTTP::Status::TOO_MANY_REQUESTS)
+    # TODO: response.output.should eq("Retry later\n")
+
+    # Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
+    # Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
+  end
+
   it "doesn't match a non-matching request" do
     request = HTTP::Request.new("GET", "/")
     response = HTTP::Server::Response.new(IO::Memory.new(""))

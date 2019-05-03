@@ -4,6 +4,7 @@ require "./defense/throttle"
 require "./defense/store"
 require "./defense/memory_store"
 require "./defense/redis_store"
+require "./defense/handler"
 
 module Defense
   def self.throttle(name : String, limit : Int32, period : Int32, &block : (HTTP::Request, HTTP::Server::Response) -> String?)
@@ -20,5 +21,11 @@ module Defense
 
   def self.store=(store : Store)
     @@store = store
+  end
+
+  def self.throttled?(request, response)
+    throttles.any? do |_, throttle|
+      throttle.matched_by?(request, response)
+    end
   end
 end
