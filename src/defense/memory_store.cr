@@ -9,5 +9,9 @@ module Defense
       # if expired => reset
       @data[key] = (@data[key]? || 0) + 1
     end
+
+    def reset
+      @data.clear
+    end
   end
 end

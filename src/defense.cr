@@ -3,6 +3,7 @@ require "http/server/response"
 require "./defense/throttle"
 require "./defense/store"
 require "./defense/memory_store"
+require "./defense/redis_store"
 
 module Defense
   def self.throttle(name : String, limit : Int32, period : Int32, &block : (HTTP::Request, HTTP::Server::Response) -> String?)
@@ -14,6 +15,10 @@ module Defense
   end
 
   def self.store : Store
-    @@store ||= MemoryStore.new
+    @@store ||= RedisStore.new(url: ENV["REDIS_URL"]?)
+  end
+
+  def self.store=(store : Store)
+    @@store = store
   end
 end
