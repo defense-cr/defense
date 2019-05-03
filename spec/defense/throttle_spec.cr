@@ -1,6 +1,10 @@
 require "spec"
 require "../../src/defense"
 
+if ENV["STORE"]? == "memory"
+  Defense.store = Defense::MemoryStore.new
+end
+
 Spec.before_each do
   Defense.store.reset
 end
