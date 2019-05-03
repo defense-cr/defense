@@ -4,8 +4,8 @@ A work in progress.
 
 ### TODO
 
-- [ ] Finish the `MemoryStore`
-- [ ] Throttle
+- [x] Finish the `MemoryStore`
+- [x] Throttle
 - [ ] Implement the HTTP::Handler
 - [ ] Use Namespace on Redis Store to keep safe data isolated.
 - [ ] Safelist

@@ -1,13 +1,19 @@
 module Defense
   class MemoryStore < Store
     def initialize
-      @data = Hash(String, Int64).new
+      @data = Hash(String, Hash(String, Int64)).new
     end
 
     def increment(key : String, expires_in : Int32) : Int64
-      # check that it's not expired
-      # if expired => reset
-      @data[key] = (@data[key]? || 0i64) + 1i64
+      current_time = Time.utc.to_unix_ms
+
+      if @data[key]? && @data[key]["expires_at"] > current_time
+        @data[key]["count"] += 1
+      else
+        @data[key] = { "count" => 1i64, "expires_at" => (current_time + expires_in * 1000) }
+      end
+
+      @data[key]["count"]
     end
 
     def reset
