@@ -13,6 +13,12 @@ def period
   60
 end
 
+def client_response(io : IO, ctx : HTTP::Server::Context) : HTTP::Client::Response
+  ctx.response.close
+  io.rewind
+  HTTP::Client::Response.from_io(io, decompress: false)
+end
+
 describe "Defense.throttle" do
   it "stores the value in a class variable" do
     rule_name = "my-throttle-rule"
@@ -31,9 +37,10 @@ describe "Defense.throttle" do
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
   end
 
-  it "matches a matching request" do
+  it "does not block the requests before exceeding the rule" do
+    io = IO::Memory.new
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
-    response = HTTP::Server::Response.new(IO::Memory.new)
+    response = HTTP::Server::Response.new(io)
 
     Defense.throttle("my-throttle-rule", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
 
@@ -42,14 +49,25 @@ describe "Defense.throttle" do
     handler.next = ->(ctx : HTTP::Server::Context) {}
 
     handler.call(ctx)
-    ctx.response.status.should eq(HTTP::Status::OK)
+    client_response = client_response(io, ctx)
+    client_response.status.should eq(HTTP::Status::OK)
+  end
 
-    handler.call(ctx)
-    ctx.response.status.should eq(HTTP::Status::TOO_MANY_REQUESTS)
-    # TODO: response.output.should eq("Retry later\n")
+  it "blocks the requests that exceed the rule" do
+    io = IO::Memory.new
+    request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
+    response = HTTP::Server::Response.new(io)
 
-    # Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
-    # Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
+    Defense.throttle("my-throttle-rule", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
+
+    ctx = HTTP::Server::Context.new(request, response)
+    handler = Defense::Handler.new
+    handler.next = ->(ctx : HTTP::Server::Context) {}
+
+    2.times { handler.call(ctx) }
+    client_response = client_response(io, ctx)
+    client_response.body.should eq("Retry later\n")
+    client_response.status.should eq(HTTP::Status::TOO_MANY_REQUESTS)
   end
 
   it "doesn't match a non-matching request" do
