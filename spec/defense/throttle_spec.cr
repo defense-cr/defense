@@ -9,10 +9,14 @@ Spec.before_each do
   Defense.store.reset
 end
 
+def period
+  60
+end
+
 describe "Defense.throttle" do
   it "stores the value in a class variable" do
     rule_name = "my-throttle-rule"
-    Defense.throttle(rule_name, limit: 2, period: 100) { }
+    Defense.throttle(rule_name, limit: 2, period: period) { }
     Defense.throttles.size.should eq(1)
     Defense.throttles.has_key?(rule_name).should be_true
   end
@@ -21,7 +25,7 @@ describe "Defense.throttle" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
     response = HTTP::Server::Response.new(IO::Memory.new(""))
 
-    Defense.throttle("my-throttle-rule", limit: 1, period: 100) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
 
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
@@ -31,7 +35,7 @@ describe "Defense.throttle" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
     response = HTTP::Server::Response.new(IO::Memory.new)
 
-    Defense.throttle("my-throttle-rule", limit: 1, period: 100) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
 
     ctx = HTTP::Server::Context.new(request, response)
     handler = Defense::Handler.new
@@ -52,7 +56,7 @@ describe "Defense.throttle" do
     request = HTTP::Request.new("GET", "/")
     response = HTTP::Server::Response.new(IO::Memory.new(""))
 
-    Defense.throttle("my-throttle-rule", limit: 2, period: 100) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 2, period: period) { |req, res| req.headers["user-agent"]? }
 
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
@@ -62,7 +66,7 @@ describe "Defense.throttle" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
     response = HTTP::Server::Response.new(IO::Memory.new(""))
 
-    Defense.throttle("my-throttle-rule", limit: 2, period: 100) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 2, period: period) { |req, res| req.headers["user-agent"]? }
 
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
@@ -81,7 +85,7 @@ describe "Defense.throttle" do
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
 
-    sleep(0.5)
+    sleep(0.1)
 
     Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
 
