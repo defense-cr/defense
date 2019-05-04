@@ -20,14 +20,13 @@ def client_response(io : IO, ctx : HTTP::Server::Context) : HTTP::Client::Respon
 end
 
 describe "Defense.throttle" do
-  it "stores the value in a class variable" do
-    rule_name = "my-throttle-rule"
-    Defense.throttle(rule_name, limit: 2, period: period) { }
+  it "creates a throttle rule" do
+    Defense.throttle("my-throttle-rule", limit: 2, period: period) { }
     Defense.throttles.size.should eq(1)
-    Defense.throttles.has_key?(rule_name).should be_true
+    Defense.throttles.has_key?("my-throttle-rule").should be_true
   end
 
-  it "matches a matching request" do
+  it "matches a request based on the rules" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
     response = HTTP::Server::Response.new(IO::Memory.new(""))
 
