@@ -4,8 +4,10 @@ module Defense
       @data = Hash(String, Hash(String, Int64)).new
     end
 
-    def increment(key : String, expires_in : Int32) : Int64
+    def increment(unprefixed_key : String, expires_in : Int32) : Int64
       current_time = Time.utc.to_unix_ms
+
+      key = "#{prefix}:#{unprefixed_key}"
 
       if @data[key]? && @data[key]["expires_at"] > current_time
         @data[key]["count"] += 1
@@ -18,6 +20,14 @@ module Defense
 
     def reset
       @data.clear
+    end
+
+    def keys
+      @data.keys
+    end
+
+    def has_key?(key : String) : Bool
+      @data.has_key?(key)
     end
   end
 end

@@ -9,10 +9,17 @@ module Defense
       discriminator = block.call(request, response)
       return false unless discriminator
 
-      store = Defense.store
-      count = store.increment(discriminator, period)
+      count = store.increment("#{prefix}:#{discriminator}", period)
 
       count > limit
+    end
+
+    private def store
+      Defense.store
+    end
+
+    private def prefix
+      "throttle:#{name}"
     end
   end
 end

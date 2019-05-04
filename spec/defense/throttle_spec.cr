@@ -30,10 +30,11 @@ describe "Defense.throttle" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
     response = HTTP::Server::Response.new(IO::Memory.new(""))
 
-    Defense.throttle("my-throttle-rule", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("user-agent", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
 
-    Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_false
-    Defense.throttles["my-throttle-rule"].matched_by?(request, response).should be_true
+    Defense.throttles["user-agent"].matched_by?(request, response).should be_false
+    Defense.throttles["user-agent"].matched_by?(request, response).should be_true
+    Defense.store.has_key?("defense:throttle:user-agent:bot").should be_true
   end
 
   it "does not block the requests before exceeding the rule" do
