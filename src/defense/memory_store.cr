@@ -4,9 +4,6 @@ module Defense
       @data = Hash(String, Hash(String, Int64)).new
     end
 
-    delegate keys, to: @data
-    delegate has_key?, to: @data
-
     def increment(unprefixed_key : String, expires_in : Int32) : Int64
       current_time = Time.utc.to_unix_ms
 

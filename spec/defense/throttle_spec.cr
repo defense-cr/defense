@@ -6,20 +6,9 @@ end
 
 describe "Defense.throttle" do
   it "creates a throttle rule" do
+    Defense.throttles.size.should eq(0)
     Defense.throttle("my-throttle-rule", limit: 2, period: period) { }
     Defense.throttles.size.should eq(1)
-    Defense.throttles.has_key?("my-throttle-rule").should be_true
-  end
-
-  it "matches a request based on the rules" do
-    request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
-    response = HTTP::Server::Response.new(IO::Memory.new(""))
-
-    Defense.throttle("user-agent", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
-
-    Defense.throttles["user-agent"].matched_by?(request, response).should be_false
-    Defense.throttles["user-agent"].matched_by?(request, response).should be_true
-    Defense.store.has_key?("defense:throttle:user-agent:bot").should be_true
   end
 
   it "does not block the requests before exceeding the rule" do
