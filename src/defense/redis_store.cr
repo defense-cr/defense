@@ -20,9 +20,8 @@ module Defense
     end
 
     def reset
-      defense_keys_to_delete = @redis.keys("defense*")
-      return if defense_keys_to_delete.empty?
-      @redis.del(defense_keys_to_delete)
+      return if keys.empty?
+      @redis.del(keys)
     end
 
     def has_key?(key : String) : Bool
@@ -30,7 +29,7 @@ module Defense
     end
 
     def keys
-      @redis.keys("defense:*")
+      @redis.keys("#{prefix}:*")
     end
   end
 end
