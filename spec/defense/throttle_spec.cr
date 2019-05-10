@@ -1,22 +1,7 @@
-require "spec"
-require "../../src/defense"
-
-if ENV["STORE"]? == "memory"
-  Defense.store = Defense::MemoryStore.new
-end
-
-Spec.before_each do
-  Defense.store.reset
-end
+require "../spec_helper"
 
 def period
   60
-end
-
-def client_response(io : IO, ctx : HTTP::Server::Context) : HTTP::Client::Response
-  ctx.response.close
-  io.rewind
-  HTTP::Client::Response.from_io(io, decompress: false)
 end
 
 describe "Defense.throttle" do
@@ -49,7 +34,7 @@ describe "Defense.throttle" do
     handler.next = ->(ctx : HTTP::Server::Context) {}
 
     handler.call(ctx)
-    client_response = client_response(io, ctx)
+    client_response = Helper.client_response(io, ctx)
     client_response.status.should eq(HTTP::Status::OK)
   end
 
@@ -65,9 +50,31 @@ describe "Defense.throttle" do
     handler.next = ->(ctx : HTTP::Server::Context) {}
 
     2.times { handler.call(ctx) }
-    client_response = client_response(io, ctx)
-    client_response.body.should eq("Retry later\n")
+    client_response = Helper.client_response(io, ctx)
     client_response.status.should eq(HTTP::Status::TOO_MANY_REQUESTS)
+    client_response.body.should eq("Retry later\n")
+  end
+
+  it "adapts the throttled response based on the value of Defense.throttled_response" do
+    io = IO::Memory.new
+    request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
+    response = HTTP::Server::Response.new(io)
+
+    Defense.throttle("my-throttle-rule", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
+    Defense.throttled_response = ->(response : HTTP::Server::Response) do
+      response.status = HTTP::Status::UNAUTHORIZED
+      response.content_type = "application/json"
+      response.puts("{'hello':'world'}")
+    end
+
+    ctx = HTTP::Server::Context.new(request, response)
+    handler = Defense::Handler.new
+    handler.next = ->(ctx : HTTP::Server::Context) {}
+
+    2.times { handler.call(ctx) }
+    client_response = Helper.client_response(io, ctx)
+    client_response.status.should eq(HTTP::Status::UNAUTHORIZED)
+    client_response.body.should eq("{'hello':'world'}\n")
   end
 
   it "doesn't match a non-matching request" do

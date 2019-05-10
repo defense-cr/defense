@@ -9,9 +9,9 @@ A work in progress.
 - [ ] Implement the HTTP::Handler
 - [ ] Use Namespace on Redis Store to keep safe data isolated.
 - [ ] Safelist
-- [ ] Blocklist
+- [x] Blocklist
 - [ ] Allow2ban
-- [ ] Custom Response
+- [x] Custom Response
 
 
 ### other TODO's
