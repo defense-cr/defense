@@ -20,8 +20,9 @@ module Defense
     end
 
     def reset
-      # TODO: When we introduce namespaces, clean only namespaced data
-      @redis.flushdb
+      defense_keys_to_delete = @redis.keys("defense*")
+      return if defense_keys_to_delete.empty?
+      @redis.del(defense_keys_to_delete)
     end
 
     def has_key?(key : String) : Bool
