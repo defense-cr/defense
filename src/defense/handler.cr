@@ -8,7 +8,9 @@ module Defense
     end
 
     def call(ctx : HTTP::Server::Context)
-      if Defense.blocklisted?(ctx.request, ctx.response)
+      if Defense.safelisted?(ctx.request, ctx.response)
+        call_next(ctx)
+      elsif Defense.blocklisted?(ctx.request, ctx.response)
         Defense.blocklisted_response.call(ctx.response)
       elsif Defense.throttled?(ctx.request, ctx.response)
         Defense.throttled_response.call(ctx.response)

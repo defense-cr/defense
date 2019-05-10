@@ -6,12 +6,13 @@ A work in progress.
 
 - [x] Finish the `MemoryStore`
 - [x] Throttle
-- [ ] Implement the HTTP::Handler
+- [x] Implement the HTTP::Handler
 - [ ] Use Namespace on Redis Store to keep safe data isolated.
-- [ ] Safelist
+- [x] Safelist
 - [x] Blocklist
 - [ ] Allow2ban
 - [x] Custom Response
+- [ ] Figure out how to deal with response matchers (or introduce track blocks instead)
 
 
 ### other TODO's

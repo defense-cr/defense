@@ -40,6 +40,24 @@ describe "Defense.blocklist" do
     client_response.body.should eq("Forbidden\n")
   end
 
+  it "blocks the request if one of several blocks matches the request" do
+    io = IO::Memory.new
+    request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
+    response = HTTP::Server::Response.new(io)
+
+    Defense.blocklist { |req, res| req.headers["user-agent"]? == "not-a-bot" }
+    Defense.blocklist { |req, res| req.headers["user-agent"]? == "bot" }
+
+    ctx = HTTP::Server::Context.new(request, response)
+    handler = Defense::Handler.new
+    handler.next = ->(ctx : HTTP::Server::Context) {}
+
+    handler.call(ctx)
+    client_response = Helper.client_response(io, ctx)
+    client_response.status.should eq(HTTP::Status::FORBIDDEN)
+    client_response.body.should eq("Forbidden\n")
+  end
+
   it "adapts the blocklisted response based on the value of Defense.blocklisted_response" do
     io = IO::Memory.new
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})

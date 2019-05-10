@@ -5,10 +5,16 @@ if ENV["STORE"]? == "memory"
   Defense.store = Defense::MemoryStore.new
 end
 
+original_throttled_response = Defense.throttled_response
+original_blocklisted_response = Defense.blocklisted_response
+
 Spec.before_each do
   Defense.store.reset
   Defense.throttles.clear
   Defense.blocklists.clear
+  Defense.safelists.clear
+  Defense.throttled_response = original_throttled_response
+  Defense.blocklisted_response = original_blocklisted_response
 end
 
 module Helper

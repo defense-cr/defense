@@ -2,6 +2,7 @@ require "http/request"
 require "http/server/response"
 require "./defense/throttle"
 require "./defense/blocklist"
+require "./defense/safelist"
 require "./defense/store"
 require "./defense/memory_store"
 require "./defense/redis_store"
@@ -44,12 +45,20 @@ module Defense
     blocklists << Blocklist.new(&block)
   end
 
+  def self.safelist(&block : (HTTP::Request, HTTP::Server::Response) -> Bool)
+    safelists << Safelist.new(&block)
+  end
+
   def self.throttles
     @@throttles ||= Hash(String, Throttle).new
   end
 
   def self.blocklists
     @@blocklists ||= Array(Blocklist).new
+  end
+
+  def self.safelists
+    @@safelists ||= Array(Safelist).new
   end
 
   def self.store : Store
@@ -69,6 +78,12 @@ module Defense
   def self.blocklisted?(request, response)
     blocklists.any? do |blocklist|
       blocklist.matched_by?(request, response)
+    end
+  end
+
+  def self.safelisted?(request, response)
+    safelists.any? do |safelist|
+      safelist.matched_by?(request, response)
     end
   end
 end
