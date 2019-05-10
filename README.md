@@ -7,7 +7,7 @@ A work in progress.
 - [x] Finish the `MemoryStore`
 - [x] Throttle
 - [x] Implement the HTTP::Handler
-- [ ] Use Namespace on Redis Store to keep safe data isolated.
+- [x] Use Namespace on Redis Store to keep safe data isolated.
 - [x] Safelist
 - [x] Blocklist
 - [ ] Allow2ban
