@@ -19,6 +19,10 @@ module Defense
       count.value.as(Int64)
     end
 
+    def exists(unprefixed_key : String) : Bool
+      @redis.exists("#{prefix}:#{unprefixed_key}") == 1
+    end
+
     def reset
       keys = @redis.keys("#{prefix}:*")
       return if keys.empty?

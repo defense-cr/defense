@@ -18,6 +18,11 @@ module Defense
       @data[key]["count"]
     end
 
+    def exists(unprefixed_key : String) : Bool
+      key = "#{prefix}:#{unprefixed_key}"
+      @data.has_key?(key)
+    end
+
     def reset
       @data.clear
     end
