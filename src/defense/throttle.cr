@@ -1,5 +1,5 @@
 module Defense
-  class Throttle
+  private class Throttle
     getter :name, :limit, :period, :block
 
     def initialize(@name : String, @limit : Int32, @period : Int32, &@block : (HTTP::Request, HTTP::Server::Response) -> String?)

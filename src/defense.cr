@@ -62,6 +62,13 @@ module Defense
     @@safelists ||= Array(Safelist).new
   end
 
+  def self.reset
+    throttles.clear
+    blocklists.clear
+    safelists.clear
+    store.reset
+  end
+
   def self.store : Store
     @@store ||= RedisStore.new(url: ENV["REDIS_URL"]?)
   end
@@ -70,19 +77,19 @@ module Defense
     @@store = store
   end
 
-  def self.throttled?(request, response)
+  protected def self.throttled?(request, response)
     throttles.any? do |_, throttle|
       throttle.matched_by?(request, response)
     end
   end
 
-  def self.blocklisted?(request, response)
+  protected def self.blocklisted?(request, response)
     blocklists.any? do |blocklist|
       blocklist.matched_by?(request, response)
     end
   end
 
-  def self.safelisted?(request, response)
+  protected def self.safelisted?(request, response)
     safelists.any? do |safelist|
       safelist.matched_by?(request, response)
     end

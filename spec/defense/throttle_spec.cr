@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-def period
+private def period
   60
 end
 

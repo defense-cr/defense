@@ -1,5 +1,5 @@
 module Defense
-  class Blocklist
+  private class Blocklist
     getter :block
 
     def initialize(&@block : (HTTP::Request, HTTP::Server::Response) -> Bool)

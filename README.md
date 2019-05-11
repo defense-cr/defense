@@ -13,9 +13,6 @@ A work in progress.
 - [ ] Allow2ban
 - [x] Custom Response
 - [ ] Figure out how to deal with response matchers (or introduce track blocks instead)
-
-
-### other TODO's
-
 - [ ] Fail2ban
 - [ ] Tracking
+- [ ] Add documentation
