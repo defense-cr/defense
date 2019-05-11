@@ -23,6 +23,9 @@ module Defense
       @data.has_key?(key)
     end
 
+    def read(key : String) : Int32 | String | Nil
+    end
+
     def reset
       @data.clear
     end

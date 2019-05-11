@@ -23,6 +23,10 @@ module Defense
       @redis.exists("#{prefix}:#{unprefixed_key}") == 1
     end
 
+    def read(key : String) : Int32 | String | Nil
+      @redis.get(key)
+    end
+
     def reset
       keys = @redis.keys("#{prefix}:*")
       return if keys.empty?

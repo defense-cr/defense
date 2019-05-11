@@ -1,8 +1,9 @@
 module Defense
   abstract class Store
-    abstract def increment(key : String, expires_in : Int32) : Int64
+    abstract def exists(unprefixed_key  : String) : Bool
+    abstract def increment(unprefixed_key : String, expires_in : Int32) : Int64
+    abstract def read(key : String) : Int32 | String | Nil
     abstract def reset
-    abstract def exists(key : String) : Bool
 
     def prefix
       "defense"
