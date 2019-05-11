@@ -15,12 +15,7 @@ describe "Defense.safelist" do
     Defense.safelist { |req, rep| req.headers["user-agent"]? == "bot" }
     Defense.blocklist { true }
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::OK)
   end
 
@@ -33,12 +28,7 @@ describe "Defense.safelist" do
     Defense.safelist { |req, rep| req.headers["user-agent"]? == "bot" }
     Defense.blocklist { true }
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::OK)
   end
 
@@ -50,12 +40,7 @@ describe "Defense.safelist" do
     Defense.safelist { |req, rep| req.headers["user-agent"]? == "not-a-bot" }
     Defense.blocklist { true }
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::FORBIDDEN)
     client_response.body.should eq("Forbidden\n")
   end

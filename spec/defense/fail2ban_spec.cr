@@ -12,12 +12,7 @@ describe "Defense.fail2ban" do
       end
     end
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::OK)
   end
 
@@ -32,12 +27,7 @@ describe "Defense.fail2ban" do
       end
     end
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::FORBIDDEN)
   end
 end

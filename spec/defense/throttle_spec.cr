@@ -18,12 +18,7 @@ describe "Defense.throttle" do
 
     Defense.throttle("my-throttle-rule", limit: 1, period: period) { |req, res| req.headers["user-agent"]? }
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::OK)
   end
 

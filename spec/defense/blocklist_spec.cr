@@ -14,12 +14,7 @@ describe "Defense.blocklist" do
 
     Defense.blocklist { |req, res| req.headers["user-agent"]? == "not-a-bot" }
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::OK)
   end
 
@@ -30,12 +25,7 @@ describe "Defense.blocklist" do
 
     Defense.blocklist { |req, res| req.headers["user-agent"]? == "bot" }
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::FORBIDDEN)
     client_response.body.should eq("Forbidden\n")
   end
@@ -48,12 +38,7 @@ describe "Defense.blocklist" do
     Defense.blocklist { |req, res| req.headers["user-agent"]? == "not-a-bot" }
     Defense.blocklist { |req, res| req.headers["user-agent"]? == "bot" }
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::FORBIDDEN)
     client_response.body.should eq("Forbidden\n")
   end
@@ -70,12 +55,7 @@ describe "Defense.blocklist" do
       response.puts("{'hello':'world'}")
     end
 
-    ctx = HTTP::Server::Context.new(request, response)
-    handler = Defense::Handler.new
-    handler.next = ->(ctx : HTTP::Server::Context) {}
-
-    handler.call(ctx)
-    client_response = Helper.client_response(io, ctx)
+    client_response = Helper.call_handler(io, request, response)
     client_response.status.should eq(HTTP::Status::UNAUTHORIZED)
     client_response.body.should eq("{'hello':'world'}\n")
   end

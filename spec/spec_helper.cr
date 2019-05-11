@@ -23,4 +23,13 @@ module Helper
     io.rewind
     HTTP::Client::Response.from_io(io, decompress: false)
   end
+
+  def self.call_handler(io : IO, request : HTTP::Request, response : HTTP::Server::Response) : HTTP::Client::Response
+      ctx = HTTP::Server::Context.new(request, response)
+      handler = Defense::Handler.new
+      handler.next = ->(ctx : HTTP::Server::Context) {}
+
+      handler.call(ctx)
+      client_response(io, ctx)
+  end
 end
