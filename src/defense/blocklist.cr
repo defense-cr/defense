@@ -1,8 +1,8 @@
 module Defense
   private class Blocklist
-    getter :block
+    getter :name, :block
 
-    def initialize(&@block : (HTTP::Request, HTTP::Server::Response) -> Bool)
+    def initialize(@name : String, &@block : (HTTP::Request, HTTP::Server::Response) -> Bool)
     end
 
     def matched_by?(request : HTTP::Request, response : HTTP::Server::Response) : Bool
