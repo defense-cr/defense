@@ -6,6 +6,9 @@ module Defense
         filter = true
       elsif yield
         count = store.increment("#{prefix}:count:#{discriminator}", findtime)
+        if count >= maxretry
+          store.increment("#{prefix}:ban:#{discriminator}", bantime)
+        end
         filter = true
       end
       filter

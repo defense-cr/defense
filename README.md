@@ -13,6 +13,6 @@ A work in progress.
 - [ ] Allow2ban
 - [x] Custom Response
 - [ ] Figure out how to deal with response matchers (or introduce track blocks instead)
-- [ ] Fail2ban
+- [x] Fail2ban
 - [ ] Tracking
 - [ ] Add documentation
