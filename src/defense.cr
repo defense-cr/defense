@@ -10,34 +10,6 @@ require "./defense/redis_store"
 require "./defense/handler"
 
 module Defense
-  @@blocklisted_response : (HTTP::Server::Response) -> Nil = ->(response : HTTP::Server::Response) do
-    response.status = HTTP::Status::FORBIDDEN
-    response.content_type = "text/plain"
-    response.puts("Forbidden\n")
-  end
-
-  def self.blocklisted_response
-    @@blocklisted_response
-  end
-
-  def self.blocklisted_response=(block : (HTTP::Server::Response) -> Nil)
-    @@blocklisted_response = block
-  end
-
-  @@throttled_response : (HTTP::Server::Response) -> Nil = ->(response : HTTP::Server::Response) do
-    response.status = HTTP::Status::TOO_MANY_REQUESTS
-    response.content_type = "text/plain"
-    response.puts("Retry later\n")
-  end
-
-  def self.throttled_response
-    @@throttled_response
-  end
-
-  def self.throttled_response=(block : (HTTP::Server::Response) -> Nil)
-    @@throttled_response = block
-  end
-
   def self.throttle(name : String, limit : Int32, period : Int32, &block : (HTTP::Request, HTTP::Server::Response) -> String?)
     throttles[name] = Throttle.new(name, limit, period, &block)
   end
@@ -50,22 +22,15 @@ module Defense
     safelists << Safelist.new(&block)
   end
 
-  def self.throttles
-    @@throttles ||= Hash(String, Throttle).new
+  def self.throttled_response=(block : (HTTP::Server::Response) -> Nil)
+    @@throttled_response = block
   end
 
-  def self.blocklists
-    @@blocklists ||= Array(Blocklist).new
-  end
-
-  def self.safelists
-    @@safelists ||= Array(Safelist).new
+  def self.blocklisted_response=(block : (HTTP::Server::Response) -> Nil)
+    @@blocklisted_response = block
   end
 
   def self.reset
-    throttles.clear
-    blocklists.clear
-    safelists.clear
     store.reset
   end
 
@@ -75,6 +40,38 @@ module Defense
 
   def self.store=(store : Store)
     @@store = store
+  end
+
+  @@throttled_response : (HTTP::Server::Response) -> Nil = ->(response : HTTP::Server::Response) do
+    response.status = HTTP::Status::TOO_MANY_REQUESTS
+    response.content_type = "text/plain"
+    response.puts("Retry later\n")
+  end
+
+  protected def self.throttled_response
+    @@throttled_response
+  end
+
+  @@blocklisted_response : (HTTP::Server::Response) -> Nil = ->(response : HTTP::Server::Response) do
+    response.status = HTTP::Status::FORBIDDEN
+    response.content_type = "text/plain"
+    response.puts("Forbidden\n")
+  end
+
+  protected def self.blocklisted_response
+    @@blocklisted_response
+  end
+
+  protected def self.throttles
+    @@throttles ||= Hash(String, Throttle).new
+  end
+
+  protected def self.blocklists
+    @@blocklists ||= Array(Blocklist).new
+  end
+
+  protected def self.safelists
+    @@safelists ||= Array(Safelist).new
   end
 
   protected def self.throttled?(request, response)
