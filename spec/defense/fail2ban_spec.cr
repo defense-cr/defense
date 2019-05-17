@@ -38,7 +38,7 @@ describe "Defense.fail2ban" do
           Helper.call_handler(request)
 
           ip = request.host_with_port
-          Defense.store.read("defense:fail2ban:count:spec-#{ip}").should eq("1")
+          Defense.store.read("fail2ban:count:spec-#{ip}").should eq(1)
         end
 
         it "is not banned yet" do
@@ -47,7 +47,7 @@ describe "Defense.fail2ban" do
           Helper.call_handler(request)
 
           ip = request.host_with_port
-          Defense.store.read("defense:fail2ban:ban:spec-#{ip}").should be_nil
+          Defense.store.read("fail2ban:ban:spec-#{ip}").should be_nil
         end
       end
 
@@ -67,7 +67,7 @@ describe "Defense.fail2ban" do
           2.times { Helper.call_handler(request) }
 
           ip = request.host_with_port
-          Defense.store.read("defense:fail2ban:count:spec-#{ip}").should eq("2")
+          Defense.store.read("fail2ban:count:spec-#{ip}").should eq(2)
         end
 
         it "is banned" do
@@ -76,7 +76,7 @@ describe "Defense.fail2ban" do
           2.times { Helper.call_handler(request) }
 
           ip = request.host_with_port
-          Defense.store.read("defense:fail2ban:ban:spec-#{ip}").should eq("1")
+          Defense.store.read("fail2ban:ban:spec-#{ip}").should eq(1)
         end
       end
     end

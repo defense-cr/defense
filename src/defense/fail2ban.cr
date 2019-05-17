@@ -14,9 +14,8 @@ module Defense
       filter
     end
 
-
     private def self.banned?(discriminator : String) : Bool
-      store.exists("#{prefix}:ban:#{discriminator}")
+      store.exists?("#{prefix}:ban:#{discriminator}")
     end
 
     private def self.store

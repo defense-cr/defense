@@ -9,7 +9,7 @@ module Defense
     def increment(unprefixed_key : String, expires_in : Int32) : Int64
       count = Redis::Future.new
 
-      key = "#{prefix}:#{unprefixed_key}"
+      key = prefix_key(unprefixed_key)
 
       @redis.pipelined do |pipeline|
         count = pipeline.incr(key).as(Redis::Future)
@@ -19,12 +19,12 @@ module Defense
       count.value.as(Int64)
     end
 
-    def exists(unprefixed_key : String) : Bool
-      @redis.exists("#{prefix}:#{unprefixed_key}") == 1
+    def exists?(unprefixed_key : String) : Bool
+      @redis.exists(prefix_key(unprefixed_key)) == 1
     end
 
-    def read(key : String) : Int32 | String | Nil
-      @redis.get(key)
+    def read(unprefixed_key : String) : Int64 | Nil
+      @redis.get(prefix_key(unprefixed_key)).try(&.to_i64)
     end
 
     def reset
