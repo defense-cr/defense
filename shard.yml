@@ -9,8 +9,8 @@ crystal: 0.28.0
 
 dependencies:
   redis:
-    github: rodrigopinto/crystal-redis
-    branch: rp-del-cmd-array-param
+    github: stefanwille/crystal-redis
+    branch: master
 
 development_dependencies:
   sentry:

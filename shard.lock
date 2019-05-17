@@ -5,8 +5,8 @@ shards:
     version: 0.2.3
 
   redis:
-    github: rodrigopinto/crystal-redis
-    commit: bb725bc74c0ef59c0fe67df0cfed9e029dbb1685
+    github: stefanwille/crystal-redis
+    commit: 64f94ad8e50930e898bf43d34904918496a053e6
 
   sentry:
     github: samueleaton/sentry
