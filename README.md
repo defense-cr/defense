@@ -1,6 +1,7 @@
 # Defense
 
-🔮 Crystal HTTP handler for throttling and blocking requests in Crystal.
+🔮 Crystal HTTP handler for throttling and blocking requests.
+[![Build Status](https://travis-ci.com/defense-cr/defense.svg?branch=master)](https://travis-ci.com/defense-cr/defense)
 
 ### TODO
 
