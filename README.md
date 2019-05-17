@@ -15,7 +15,7 @@
 - [x] Custom Response
 - [x] Fail2ban
 - [ ] Add travis ci configuration to run specs. (config. to run against store's matrix)
-- [ ] Allow2ban
+- [x] Allow2ban
 - [ ] Add documentation
 - [ ] Tracking
 - [ ] Figure out how to deal with response matchers (or introduce track blocks instead)

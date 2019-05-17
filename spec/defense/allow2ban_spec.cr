@@ -2,7 +2,7 @@ require "../spec_helper"
 
 private def setup
   Defense.blocklist do |req, _|
-    Defense::Fail2Ban.filter("spec-#{req.host_with_port}", maxretry: 2, bantime: 60, findtime: 60) do
+    Defense::Allow2Ban.filter("spec-#{req.host_with_port}", maxretry: 2, bantime: 60, findtime: 60) do
       (req.query =~ /FAIL/) != nil
     end
   end
@@ -12,7 +12,7 @@ private def headers
   HTTP::Headers{"Host" => "1.2.3.4"}
 end
 
-describe "Defense.fail2ban" do
+describe "Defense.allow2ban" do
   describe "while the discriminator is not banned" do
     context "receives a valid request" do
       it "responds with success" do
@@ -26,12 +26,12 @@ describe "Defense.fail2ban" do
 
     context "receives an invalid request" do
       context "while maxretry is not reached" do
-        it "responds with forbidden" do
+        it "responds with success" do
           setup
           request = HTTP::Request.new("GET", "/?filter=FAIL", headers)
 
           response = Helper.call_handler(request)
-          response.status.should eq(HTTP::Status::FORBIDDEN)
+          response.status.should eq(HTTP::Status::OK)
         end
 
         it "increments the fail counter" do
@@ -41,7 +41,7 @@ describe "Defense.fail2ban" do
           Helper.call_handler(request)
 
           ip = request.host_with_port
-          Defense.store.read("fail2ban:count:spec-#{ip}").should eq(1)
+          Defense.store.read("allow2ban:count:spec-#{ip}").should eq(1)
         end
 
         it "is not banned yet" do
@@ -51,16 +51,16 @@ describe "Defense.fail2ban" do
           Helper.call_handler(request)
 
           ip = request.host_with_port
-          Defense.store.read("fail2ban:ban:spec-#{ip}").should be_nil
+          Defense.store.read("allow2ban:ban:spec-#{ip}").should be_nil
         end
       end
 
-      context "when maxretry is reached" do
+      context "when maxretry is exceeded" do
         it "responds with forbidden" do
           setup
           request = HTTP::Request.new("GET", "/?filter=FAIL", headers)
 
-          Helper.call_handler(request)
+          2.times { Helper.call_handler(request) }
           last_response = Helper.call_handler(request)
 
           last_response.status.should eq(HTTP::Status::FORBIDDEN)
@@ -70,20 +70,20 @@ describe "Defense.fail2ban" do
           setup
           request = HTTP::Request.new("GET", "/?filter=FAIL", headers)
 
-          2.times { Helper.call_handler(request) }
+          3.times { Helper.call_handler(request) }
 
           ip = request.host_with_port
-          Defense.store.read("fail2ban:count:spec-#{ip}").should eq(2)
+          Defense.store.read("allow2ban:count:spec-#{ip}").should eq(2)
         end
 
         it "is banned" do
           setup
           request = HTTP::Request.new("GET", "/?filter=FAIL", headers)
 
-          2.times { Helper.call_handler(request) }
+          3.times { Helper.call_handler(request) }
 
           ip = request.host_with_port
-          Defense.store.read("fail2ban:ban:spec-#{ip}").should eq(1)
+          Defense.store.read("allow2ban:ban:spec-#{ip}").should eq(1)
         end
       end
     end
