@@ -1,8 +1,10 @@
+dist: xenial
 language: crystal
 services:
   - redis-server
 crystal:
   - latest
+  - nightly
 env:
   - STORE=memory
   - STORE=redis
