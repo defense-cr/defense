@@ -1,14 +1,14 @@
 # Defense
-🔮 Crystal HTTP handler for throttling and blocking requests.
 
 [![Build Status](https://travis-ci.com/defense-cr/defense.svg?branch=master)](https://travis-ci.com/defense-cr/defense)
 
-## Usage
+🔮 *A Crystal HTTP handler for throttling, blocking or tracking mailicious requests* 🔮
 
+## Getting started
 
-### Install
+### Installation
 
-Add `defense` as dependency to the `shards.yml`.
+Add the shard as a dependency to your project's `shards.yml`:
 
 ```yaml
 dependencies:
@@ -16,72 +16,131 @@ dependencies:
     github: defense-cr/defense
 ```
 
-Install it.
+...and install it:
 
-`$ shards install`
-	
-### Connecting to the application
+```sh
+shards install
+```
 
+### Plugging into the application
+
+Defense is built as a Crystal `HTTP::Handler`. You will need to register this handler explicitly with your web
+application's handler chain. For more details about *handlers* and the *handler chain*, follow
+[this link](https://crystal-lang.org/api/latest/HTTP/Server.html).
+
+Usually, the earlier you register the handler within your handler chain, the better. This ensures that malicious
+requests are blocked early own, before other layers (handlers) of your application are reached.
+
+Here's how to achieve this in some of the most popular Crystal web frameworks:
 
 #### Kemal
 
-Create a `config/defense.cr` file and add:
+In Kemal you would use the `add_handler` method to register the Defense handler:
+
+```crystal
+require "kemal"
+require "defense"
+
+add_handler Defense::Handler.new
+```
+
+For more details, check out the [kemal-defense-example repository](https://github.com/defense-cr/kemal-defense-example).
+
+#### Amber
+
+```crystal
+# TODO
+```
+
+#### Lucky
+
+```crystal
+# TODO
+````
+
+#### HTTP::Server (Standalone)
 
 ```crystal
 require "defense"
+require "http/server"
 
-Defense.blocklist do |req, _|
-  (req.query =~ /BLOCK/) != nil
+# Handlers are passed in order as an argument to the HTTP::Server initializer
+server = HTTP::Server.new([Defense::Handler.new]) do |context|
+  context.response.content_type = "text/plain"
+  context.response.print "hello world"
 end
 
-# add other rules here
+server.bind_tcp(8080)
+server.listen
 ```
 
-Add the handler to the main application. At the `src/app.cr` add:
+### Usage
 
+Defense provides a set of configureable rules that you can use to throttle, block or track malicious requests based
+on your own heuristics.
+
+#### Throttling
 
 ```crystal
-require "../config/defense"
-require "kemal"
-
-add_handler Defense::Handler.new
-
-# ...
+# TODO
 ```
 
-See the [kemal-defense-example](https://github.com/defense-cr/kemal-defense-example) 
+#### Safelist
 
+```crystal
+# TODO
+```
 
-## Contributing
+#### Blocklist
 
-1. Fork it (<https://github.com/defense-cr/defense/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+```crystal
+# TODO
+```
 
-### Development
+#### Fail2Ban
 
-1. Install the dependencies.
+```crystal
+# TODO
+```
 
-	```bash
-	$ shards install
-	```
+#### Allow2Ban
 
-2. Implement and test your changes.
+```crystal
+# TODO
+```
 
-	```bash
-	$ crystal spec
-	```
+## Contributing & Development
 
+Contributions are welcome! Make sure to check the existing issues (including the closed ones) before requesting a
+feature, reporting a bug or opening a pull requests.
 
-3. Run fomart tool to verify code style.
+### Getting started
 
-	```bash
-	$ crystal tool format
-	```
+Install dependencies:
 
-### TODO's
+```sh
+shards install
+```
+
+Run tests:
+
+```sh
+crystal spec
+```
+
+Format the code:
+
+```sh
+crystal tool format
+```
+
+### Guidelines
+
+- Keep the public interface small. Anything that doesn't have to be public, should explicitly be marked as protected or
+private.
+- Prefer integration tests over unit tests - at least for now.
+
+### TODOs
 
 - [ ] Add documentation
 - [ ] Tracking
@@ -92,8 +151,4 @@ See the [kemal-defense-example](https://github.com/defense-cr/kemal-defense-exam
 - [Florin Lipan](https://github.com/lipanski)
 - [Rodrigo Pinto](https://github.com/rodrigopinto)
 
-## Inspiration
-
-Shard was inspired by [rack-attack][1].
-
-[1]: https://github.com/kickstarter/rack-attack
+This shard is heavily inspired by [rack-attack](https://github.com/kickstarter/rack-attack).
