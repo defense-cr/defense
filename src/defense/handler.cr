@@ -8,11 +8,11 @@ module Defense
     end
 
     def call(ctx : HTTP::Server::Context)
-      if Defense.safelisted?(ctx.request, ctx.response)
+      if Defense.safelisted?(ctx.request)
         call_next(ctx)
-      elsif Defense.blocklisted?(ctx.request, ctx.response)
+      elsif Defense.blocklisted?(ctx.request)
         Defense.blocklisted_response.call(ctx.response)
-      elsif Defense.throttled?(ctx.request, ctx.response)
+      elsif Defense.throttled?(ctx.request)
         Defense.throttled_response.call(ctx.response)
       else
         call_next(ctx)

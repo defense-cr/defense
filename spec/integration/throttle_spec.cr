@@ -4,7 +4,7 @@ describe "Defense.throttle" do
   it "does not block the requests before exceeding the rule" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
 
-    Defense.throttle("my-throttle-rule", limit: 1, period: 60) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 1, period: 60) { |req| req.headers["user-agent"]? }
 
     response = Helper.call_handler(request)
     response.status.should eq(HTTP::Status::OK)
@@ -13,7 +13,7 @@ describe "Defense.throttle" do
   it "blocks the requests that exceed the rule" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
 
-    Defense.throttle("my-throttle-rule", limit: 5, period: 60) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 5, period: 60) { |req| req.headers["user-agent"]? }
 
     5.times { Helper.call_handler(request) }
 
@@ -25,7 +25,7 @@ describe "Defense.throttle" do
   it "adapts the throttled response based on the value of Defense.throttled_response" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
 
-    Defense.throttle("my-throttle-rule", limit: 2, period: 60) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 2, period: 60) { |req| req.headers["user-agent"]? }
     Defense.throttled_response = ->(response : HTTP::Server::Response) do
       response.status = HTTP::Status::UNAUTHORIZED
       response.content_type = "application/json"
@@ -42,7 +42,7 @@ describe "Defense.throttle" do
   it "blocks requests only within the defined period" do
     request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
 
-    Defense.throttle("my-throttle-rule", limit: 3, period: 1) { |req, res| req.headers["user-agent"]? }
+    Defense.throttle("my-throttle-rule", limit: 3, period: 1) { |req| req.headers["user-agent"]? }
 
     Helper.call_handler(request).status.should eq(HTTP::Status::OK)
     Helper.call_handler(request).status.should eq(HTTP::Status::OK)

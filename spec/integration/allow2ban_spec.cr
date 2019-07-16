@@ -1,7 +1,7 @@
 require "../spec_helper"
 
 private def setup
-  Defense.blocklist do |req, _|
+  Defense.blocklist do |req|
     Defense::Allow2Ban.filter("spec-#{req.host_with_port}", maxretry: 2, bantime: 60, findtime: 60) do
       (req.query =~ /FAIL/) != nil
     end

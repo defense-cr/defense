@@ -12,15 +12,15 @@ require "./defense/redis_store"
 require "./defense/handler"
 
 module Defense
-  def self.throttle(name : String, limit : Int32, period : Int32, &block : (HTTP::Request, HTTP::Server::Response) -> String?)
+  def self.throttle(name : String, limit : Int32, period : Int32, &block : (HTTP::Request) -> String?)
     throttles[name] = Throttle.new(name, limit, period, &block)
   end
 
-  def self.blocklist(name : String = UUID.random.to_s, &block : (HTTP::Request, HTTP::Server::Response) -> Bool)
+  def self.blocklist(name : String = UUID.random.to_s, &block : (HTTP::Request) -> Bool)
     blocklists[name] = Blocklist.new(name, &block)
   end
 
-  def self.safelist(name : String = UUID.random.to_s, &block : (HTTP::Request, HTTP::Server::Response) -> Bool)
+  def self.safelist(name : String = UUID.random.to_s, &block : (HTTP::Request) -> Bool)
     safelists[name] = Safelist.new(name, &block)
   end
 
@@ -76,21 +76,21 @@ module Defense
     @@safelists ||= Hash(String, Safelist).new
   end
 
-  protected def self.throttled?(request, response)
+  protected def self.throttled?(request)
     throttles.any? do |_, throttle|
-      throttle.matched_by?(request, response)
+      throttle.matched_by?(request)
     end
   end
 
-  protected def self.blocklisted?(request, response)
+  protected def self.blocklisted?(request)
     blocklists.any? do |_, blocklist|
-      blocklist.matched_by?(request, response)
+      blocklist.matched_by?(request)
     end
   end
 
-  protected def self.safelisted?(request, response)
+  protected def self.safelisted?(request)
     safelists.any? do |_, safelist|
-      safelist.matched_by?(request, response)
+      safelist.matched_by?(request)
     end
   end
 end
