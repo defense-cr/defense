@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/defense-cr/defense.svg?branch=master)](https://travis-ci.com/defense-cr/defense)
 
-🔮 *A Crystal HTTP handler for throttling, blocking or tracking mailicious requests* 🔮
+🔮 *A Crystal HTTP handler for throttling, blocking and tracking mailicious requests* 🔮
 
 ## Getting started
 
@@ -31,17 +31,17 @@ or by using the `Defense#store=` method:
 Defense.store = Defense::RedisStore.new(url: "redis://localhost:6379/0")
 ```
 
-For simple use cases or tests, you can use the **memory store**:
+For simple use cases or tests you can use the **memory store**:
 
 ```crystal
 Defense.store = Defense::MemoryStore.new
 ```
 
-Last but not least, you can implement your own **custom store** by extending the abstract class `Defense::Store`.
+You can also implement your own **custom store** by extending the abstract class `Defense::Store`.
 
 ### Plugging into the application
 
-Defense is built as a Crystal `HTTP::Handler`. You will need to register the Defense handler to your web
+Defense is built as a Crystal `HTTP::Handler`. You will need to register the `Defense::Handler` to your web
 application's handler chain. For more information about *handlers* and the *handler chain* follow
 [this link](https://crystal-lang.org/api/latest/HTTP/Server.html).
 
@@ -82,11 +82,13 @@ class AppServer < Lucky::BaseAppServer
       Defense::Handler.new,
       Lucky::RouteHandler.new,
     ]
-   end
+  end
 end
 ```
 
 #### HTTP::Server (Standalone)
+
+When using the standard library `HTTP::Server`, any middleware is registered as part of the initializer:
 
 ```crystal
 require "defense"
@@ -103,7 +105,7 @@ server.listen
 
 ### Usage
 
-Defense provides a set of configureable rules that you can use to throttle, block or track malicious requests based
+Defense provides a set of configureable rules that you can use to throttle, block and track malicious requests based
 on your own heuristics.
 
 #### Throttling
@@ -138,7 +140,7 @@ on your own heuristics.
 
 ## Contributing & Development
 
-Contributions are welcome! Make sure to check the existing issues (including the closed ones) before requesting a
+Contributions are welcome. Make sure to check the existing issues (including the closed ones) before requesting a
 feature, reporting a bug or opening a pull requests.
 
 ### Getting started
@@ -165,7 +167,9 @@ crystal tool format
 
 - Keep the public interface small. Anything that doesn't have to be public, should explicitly be marked as protected or
 private.
-- Prefer integration tests over unit tests - at least for now.
+- Be explicit about type declaration (especially on public methods).
+- Use the Crystal formatter to format the code.
+- Prefer integration tests over unit tests (at least for now).
 
 ### TODOs
 
