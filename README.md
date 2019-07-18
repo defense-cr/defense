@@ -129,7 +129,7 @@ Defense provides a set of configurable rules that you can use to throttle, block
 
 - [Throttling](#throttling)
 - [Configure the throttled response](#configure-the-throttled-response)
-- [Blocking](#blocking)
+- [Blocklist](#blocklist)
 - [Configure the blocked response](#configure-the-blocked-response)
 - [Fail2Ban](#fail2ban)
 - [Allow2Ban](#allow2ban)
