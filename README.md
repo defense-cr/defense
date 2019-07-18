@@ -125,7 +125,15 @@ server.listen
 
 ### Usage
 
-Defense provides a set of configurable rules that you can use to throttle, block and track malicious requests based on your own heuristics.
+Defense provides a set of configurable rules that you can use to throttle, block and track malicious requests based on your own heuristics:
+
+- [Throttling](#throttling)
+- [Configure the throttled response](#configure-the-throttled-response)
+- [Blocking](#blocking)
+- [Configure the blocked response](#configure-the-blocked-response)
+- [Fail2Ban](#fail2ban)
+- [Allow2Ban](#allow2ban)
+- [Safelist](#safelist)
 
 #### Throttling
 
@@ -151,7 +159,7 @@ Defense.throttle("throttle requests per minute except localhost", limit: 10, per
 end
 ```
 
-#### Throttled response
+#### Configure the throttled response
 
 Throttled requests are responded with:
 
@@ -199,7 +207,7 @@ end
 
 The [Spamhaus DROP lists](https://www.spamhaus.org/drop/) are a great resource for malicious IPs to block.
 
-#### Blocked response
+#### Configure the blocked response
 
 Blocked requests are responded with:
 
