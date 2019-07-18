@@ -1,5 +1,5 @@
 name: defense
-version: 0.1.0
+version: 0.2.0
 
 authors:
   - Florin Lipan <florinlipan@gmail.com>
@@ -12,7 +12,3 @@ dependencies:
     github: stefanwille/crystal-redis
     branch: master
 
-development_dependencies:
-  sentry:
-    github: samueleaton/sentry
-    branch: master

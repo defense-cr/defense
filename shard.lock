@@ -7,8 +7,3 @@ shards:
   redis:
     github: stefanwille/crystal-redis
     commit: 64f94ad8e50930e898bf43d34904918496a053e6
-
-  sentry:
-    github: samueleaton/sentry
-    commit: 5e0cbde5a33f6b9f400ce7784f13817754e44c66
-
