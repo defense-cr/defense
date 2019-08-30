@@ -5,10 +5,14 @@ authors:
   - Florin Lipan <florinlipan@gmail.com>
   - Rodrigo Pinto <contato@rodrigopinto.me>
 
-crystal: 0.28.0
+crystal: 0.30.1
 
 dependencies:
   redis:
     github: stefanwille/crystal-redis
     branch: master
 
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 0.10.0

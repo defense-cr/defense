@@ -9,4 +9,5 @@ env:
   - STORE=memory
   - STORE=redis
 script:
+  - bin/ameba
   - crystal spec --verbose
