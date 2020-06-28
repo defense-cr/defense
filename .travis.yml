@@ -5,6 +5,9 @@ services:
 crystal:
   - latest
   - nightly
+matrix:
+  allow_failures:
+    - crystal: nightly
 env:
   - STORE=memory
   - STORE=redis
