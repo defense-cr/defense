@@ -30,7 +30,7 @@ module Defense
     def reset
       keys = @redis.keys("#{prefix}:*")
       return if keys.empty?
-      @redis.del(keys)
+      @redis.del(keys.map(&.to_s))
     end
   end
 end

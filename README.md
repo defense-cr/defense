@@ -287,10 +287,16 @@ Install dependencies:
 shards install
 ```
 
-Run tests:
+Run tests using Redis as a backend (requires a running Redis server):
 
 ```sh
 crystal spec
+```
+
+Run tests using the memory store as a backend:
+
+```sh
+STORE=memory crystal spec
 ```
 
 Format the code:

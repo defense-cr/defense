@@ -1,13 +1,14 @@
-version: 1.0
+version: 2.0
 shards:
   ameba:
-    github: crystal-ameba/ameba
-    version: 0.10.0
+    git: https://github.com/crystal-ameba/ameba.git
+    version: 0.13.0
 
   pool:
-    github: ysbaddaden/pool
+    git: https://github.com/ysbaddaden/pool.git
     version: 0.2.3
 
   redis:
-    github: stefanwille/crystal-redis
-    commit: 64f94ad8e50930e898bf43d34904918496a053e6
+    git: https://github.com/stefanwille/crystal-redis.git
+    version: 2.6.0
+
