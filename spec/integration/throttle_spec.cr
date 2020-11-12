@@ -64,4 +64,16 @@ describe "Defense.throttle" do
     Helper.call_handler(request).status.should eq(HTTP::Status::OK)
     Helper.call_handler(request).status.should eq(HTTP::Status::TOO_MANY_REQUESTS)
   end
+
+  it "blocks requests by IP" do
+    request = HTTP::Request.new("GET", "/", HTTP::Headers{"user-agent" => "bot"})
+
+    Defense.throttle("my-throttle-rule", limit: 5, period: 60) { |req| req.remote_address.to_s }
+
+    5.times { Helper.call_handler(request) }
+
+    response = Helper.call_handler(request)
+    response.status.should eq(HTTP::Status::TOO_MANY_REQUESTS)
+    response.body.should eq("Retry later\n")
+  end
 end

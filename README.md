@@ -145,7 +145,7 @@ The following example throttles clients based on their IP address to a limit of 
 
 ```crystal
 Defense.throttle("throttle requests per minute", limit: 10, period: 60) do |request|
-  request.remote_address
+  request.remote_address.to_s
 end
 ```
 
@@ -153,9 +153,9 @@ The following example throttles clients in a similar way but will ignore request
 
 ```crystal
 Defense.throttle("throttle requests per minute except localhost", limit: 10, period: 60) do |request|
-  return nil if request.remote_address == "127.0.0.1"
+  return nil if request.remote_address.to_s == "127.0.0.1"
 
-  request.remote_address
+  request.remote_address.to_s
 end
 ```
 
@@ -201,7 +201,7 @@ The following example blocks requests based on a predefined list of malicious IP
 MALICIOUS_IPS = ["1.1.1.1", "2.2.2.2", "3.3.3.3"]
 
 Defense.blocklist("block requests from malicious ips") do |request|
-  MALICIOUS_IPS.includes?(request.remote_address)
+  MALICIOUS_IPS.includes?(request.remote_address.to_s)
 end
 ```
 
@@ -233,7 +233,7 @@ end
 
 The `Defense::Fail2Ban.filter` method can be used within a `Defense.blocklist` block to ban misbehaving clients for a given period of time (*bantime*) after a sequence of blocked requests (*maxretry*) performed over a particular time range (*findtime*).
 
-The method's first argument should be a unique identifier of the client - the IP address is usually a safe bet. It's highly recommended to namespace this identifier, in order to avoid conflicts with other `Fail2Ban` or `Allow2Ban` calls - e.g. `my-fancy-filter:#{request.remote_address}` would be a good identifier.
+The method's first argument should be a unique identifier of the client - the IP address is usually a safe bet. It's highly recommended to namespace this identifier, in order to avoid conflicts with other `Fail2Ban` or `Allow2Ban` calls - e.g. `my-fancy-filter:#{request.remote_address.to_s}` would be a good identifier.
 
 The method also takes a block which should return `true` - in which case the request will be blocked and counted for the ban, or `false` - in which case the request will be allowed and excluded from the ban count. Note that the return value of the `#filter` block will also be used as a return value for the `#blocklist` block.
 
@@ -241,7 +241,7 @@ The following example blocks any requests containing `/etc/passwd` inside the pa
 
 ```crystal
 Defense.blocklist("fail2ban pentesters") do |request|
-  Defense::Fail2Ban.filter("pentesters:#{request.remote_address}", maxretry: 5, findtime: 60, bantime: 24 * 60 * 60) do
+  Defense::Fail2Ban.filter("pentesters:#{request.remote_address.to_s}", maxretry: 5, findtime: 60, bantime: 24 * 60 * 60) do
     request.path.includes?("/etc/passwd")
   end
 end
@@ -255,7 +255,7 @@ The following example allows all `POST /login` requests until a particular clien
 
 ```crystal
 Defense.blocklist("allow2ban too many login attempts") do |request|
-  Defense::Allow2Ban.filter("too-many-login-attempts:#{request.remote_address}", maxretry: 5, findtime: 60, bantime: 24 * 60 * 60) do
+  Defense::Allow2Ban.filter("too-many-login-attempts:#{request.remote_address.to_s}", maxretry: 5, findtime: 60, bantime: 24 * 60 * 60) do
     request.method == "POST" && request.path == "/login"
   end
 end
@@ -271,7 +271,7 @@ The following example marks all requests originating from `127.0.0.1` as safe:
 
 ```crystal
 Defense.blocklist("local requests are safe") do |request|
-  request.remote_address == "127.0.0.1"
+  request.remote_address.to_s == "127.0.0.1"
 end
 ```
 
