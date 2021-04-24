@@ -10,9 +10,9 @@ crystal: 0.35.1
 dependencies:
   redis:
     github: stefanwille/crystal-redis
-    version: ~> 2.6.0
+    version: ~> 2.7.0
 
 development_dependencies:
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 0.13.0
+    version: ~> 0.14.3
