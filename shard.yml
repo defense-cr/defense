@@ -5,7 +5,7 @@ authors:
   - Florin Lipan <florinlipan@gmail.com>
   - Rodrigo Pinto <contato@rodrigopinto.me>
 
-crystal: >= 0.35.1
+crystal: ">= 0.35.1, < 2.0.0"
 
 dependencies:
   redis:
