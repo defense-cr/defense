@@ -2,7 +2,7 @@ require "../spec_helper"
 
 private def setup
   Defense.blocklist do |req|
-    Defense::Allow2Ban.filter("spec-#{req.host_with_port}", maxretry: 2, bantime: 60, findtime: 60) do
+    Defense::Allow2Ban.filter("spec-#{req.headers["host"]}", maxretry: 2, bantime: 60, findtime: 60) do
       (req.query =~ /FAIL/) != nil
     end
   end
@@ -40,7 +40,7 @@ describe "Defense.allow2ban" do
 
           Helper.call_handler(request)
 
-          ip = request.host_with_port
+          ip = request.headers["host"]
           Defense.store.read("allow2ban:count:spec-#{ip}").should eq(1)
         end
 
@@ -50,7 +50,7 @@ describe "Defense.allow2ban" do
 
           Helper.call_handler(request)
 
-          ip = request.host_with_port
+          ip = request.headers["host"]
           Defense.store.read("allow2ban:ban:spec-#{ip}").should be_nil
         end
       end
@@ -72,7 +72,7 @@ describe "Defense.allow2ban" do
 
           3.times { Helper.call_handler(request) }
 
-          ip = request.host_with_port
+          ip = request.headers["host"]
           Defense.store.read("allow2ban:count:spec-#{ip}").should eq(2)
         end
 
@@ -82,7 +82,7 @@ describe "Defense.allow2ban" do
 
           3.times { Helper.call_handler(request) }
 
-          ip = request.host_with_port
+          ip = request.headers["host"]
           Defense.store.read("allow2ban:ban:spec-#{ip}").should eq(1)
         end
       end
