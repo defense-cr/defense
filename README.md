@@ -270,7 +270,7 @@ The method takes a block which receives the `request` as an argument. The return
 The following example marks all requests originating from `127.0.0.1` as safe:
 
 ```crystal
-Defense.blocklist("local requests are safe") do |request|
+Defense.safelist("local requests are safe") do |request|
   request.remote_address.to_s == "127.0.0.1"
 end
 ```
