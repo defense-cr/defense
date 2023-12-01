@@ -1,6 +1,6 @@
 # Defense
 
-[![Build Status](https://travis-ci.com/defense-cr/defense.svg?branch=master)](https://travis-ci.com/defense-cr/defense)
+[![Build Status](https://github.com/defense-cr/defense/actions/workflows/tests.yml/badge.svg?branch=master](https://github.com/defense-cr/defense/actions/workflows/tests.yml/?branch=master)
 
 🔮 *A Crystal HTTP handler for throttling, blocking and tracking malicious requests* 🔮
 
