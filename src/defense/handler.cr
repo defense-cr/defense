@@ -7,15 +7,15 @@ module Defense
     def initialize
     end
 
-    def call(ctx : HTTP::Server::Context)
-      if Defense.safelisted?(ctx.request)
-        call_next(ctx)
-      elsif Defense.blocklisted?(ctx.request)
-        Defense.blocklisted_response.call(ctx.response)
-      elsif Defense.throttled?(ctx.request)
-        Defense.throttled_response.call(ctx.response)
+    def call(context : HTTP::Server::Context)
+      if Defense.safelisted?(context.request)
+        call_next(context)
+      elsif Defense.blocklisted?(context.request)
+        Defense.blocklisted_response.call(context.response)
+      elsif Defense.throttled?(context.request)
+        Defense.throttled_response.call(context.response)
       else
-        call_next(ctx)
+        call_next(context)
       end
     end
   end

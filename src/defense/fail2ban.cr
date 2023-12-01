@@ -1,6 +1,6 @@
 module Defense
   class Fail2Ban
-    def self.filter(discriminator : String, maxretry : Int32 = 0, findtime : Int32 = 0, bantime : Int32 = 0) : Bool
+    def self.filter(discriminator : String, maxretry : Int32 = 0, findtime : Int32 = 0, bantime : Int32 = 0, &) : Bool
       if banned?(discriminator)
         true
       elsif yield
