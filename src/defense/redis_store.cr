@@ -2,21 +2,23 @@ require "redis"
 
 module Defense
   class RedisStore < Store
-    def initialize(url : String?)
-      @redis = Redis::PooledClient.new(url: url)
+    def initialize(url : String? = nil)
+      if !url.nil?
+        @redis = Redis::Client.new(URI.parse(url))
+      elsif ENV.has_key?("REDIS_URL")
+        @redis = Redis::Client.from_env("REDIS_URL")
+      else
+        @redis = Redis::Client.new
+      end
     end
 
     def increment(unprefixed_key : String, expires_in : Int32) : Int64
-      count = Redis::Future.new
-
       key = prefix_key(unprefixed_key)
 
-      @redis.pipelined do |pipeline|
-        count = pipeline.incr(key).as(Redis::Future)
-        pipeline.expire(key, expires_in)
-      end
-
-      count.value.as(Int64)
+      @redis.pipeline do |pipe|
+        pipe.incr(key)
+        pipe.expire(key, expires_in)
+      end.first.as(Int64)
     end
 
     def exists?(unprefixed_key : String) : Bool

@@ -37,7 +37,7 @@ module Defense
   end
 
   def self.store : Store
-    @@store ||= RedisStore.new(url: ENV["REDIS_URL"]?)
+    @@store ||= RedisStore.new
   end
 
   def self.store=(store : Store)
