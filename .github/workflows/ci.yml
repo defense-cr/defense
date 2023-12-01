@@ -28,8 +28,8 @@ jobs:
       - name: Cache shards
         uses: actions/cache@v2
         with:
-          path: ~/.cache/shards
-          key: shards-${{ hashFiles('shard.yml') }}
+          path: lib
+          key: ${{ runner.os }}-shards-${{ hashFiles('**/shard.lock') }}
           restore-keys: ${{ runner.os }}-shards-
 
       - name: Install shards
@@ -39,3 +39,6 @@ jobs:
         run: crystal spec
         env:
           STORE: ${{ matrix.store }}
+
+      - name: Ameba
+        run: bin/ameba
