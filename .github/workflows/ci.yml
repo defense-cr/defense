@@ -7,6 +7,11 @@ on:
 jobs:
   Tests:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        store: ["memory", "redis"]
+
     # env:
     #   STORE: memory
 
@@ -35,3 +40,5 @@ jobs:
 
       - name: Run tests
         run: crystal spec
+        env:
+          STORE: ${{ matrix.store }}
