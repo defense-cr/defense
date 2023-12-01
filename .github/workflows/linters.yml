@@ -1,23 +1,17 @@
-name: CI
+name: Linters
+
 on:
   push:
-    branches: [master]
+    branches:
+      - master
   pull_request:
-    branches: [master]
+    branches:
+      - "*"
+
 jobs:
-  Tests:
+  linters:
+    name: Linters
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        store: ["memory", "redis"]
-
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-
     steps:
       - name: Download source
         uses: actions/checkout@v3
@@ -35,10 +29,5 @@ jobs:
       - name: Install shards
         run: shards update
 
-      - name: Run tests
-        run: crystal spec
-        env:
-          STORE: ${{ matrix.store }}
-
-      - name: Ameba
+      - name: Run linter
         run: bin/ameba
