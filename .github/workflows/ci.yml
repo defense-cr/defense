@@ -12,9 +12,6 @@ jobs:
       matrix:
         store: ["memory", "redis"]
 
-    # env:
-    #   STORE: memory
-
     services:
       redis:
         image: redis
