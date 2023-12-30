@@ -15,9 +15,9 @@ module Defense
     def increment(unprefixed_key : String, expires_in : Int32) : Int64
       key = prefix_key(unprefixed_key)
 
-      @redis.pipeline do |pipe|
-        pipe.incr(key)
-        pipe.expire(key, expires_in)
+      @redis.multi do |r|
+        r.incr(key)
+        r.expire(key, expires_in)
       end.first.as(Int64)
     end
 
