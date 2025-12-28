@@ -57,7 +57,7 @@ describe "Defense.throttle" do
 
     Helper.call_handler(request).status.should eq(HTTP::Status::TOO_MANY_REQUESTS)
 
-    sleep(1.second)
+    sleep(1.second + 100.milliseconds)
 
     Helper.call_handler(request).status.should eq(HTTP::Status::OK)
     Helper.call_handler(request).status.should eq(HTTP::Status::OK)
