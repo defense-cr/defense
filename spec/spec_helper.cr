@@ -30,7 +30,7 @@ module Helper
     ctx = HTTP::Server::Context.new(request, response)
 
     handler = Defense::Handler.new
-    handler.next = ->(_ctx : HTTP::Server::Context) {}
+    handler.next = ->(_ctx : HTTP::Server::Context) { }
     handler.call(ctx)
 
     ctx.response.close
