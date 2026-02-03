@@ -2,13 +2,16 @@ require "redis"
 
 module Defense
   class RedisStore < Store
-    def initialize(url : String? = nil)
+    def initialize(@redis : Redis::Client)
+    end
+
+    def self.new(url : String? = nil)
       if !url.nil?
-        @redis = Redis::Client.new(URI.parse(url))
+        new Redis::Client.new(URI.parse(url))
       elsif ENV.has_key?("REDIS_URL")
-        @redis = Redis::Client.from_env("REDIS_URL")
+        new Redis::Client.from_env("REDIS_URL")
       else
-        @redis = Redis::Client.new
+        new Redis::Client.new
       end
     end
 
