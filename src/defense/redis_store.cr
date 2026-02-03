@@ -18,7 +18,7 @@ module Defense
       @redis.multi do |r|
         r.incr(key)
         r.expire(key, expires_in)
-      end.first.as(Int64)
+      end.as(Array).first.as(Int64)
     end
 
     def exists?(unprefixed_key : String) : Bool
