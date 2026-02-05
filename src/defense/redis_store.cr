@@ -5,13 +5,13 @@ module Defense
     def initialize(@redis : Redis::Client)
     end
 
-    def self.new(url : String? = nil)
+    def initialize(url : String? = nil)
       if !url.nil?
-        new Redis::Client.new(URI.parse(url))
+        @redis = Redis::Client.new(URI.parse(url))
       elsif ENV.has_key?("REDIS_URL")
-        new Redis::Client.from_env("REDIS_URL")
+        @redis = Redis::Client.from_env("REDIS_URL")
       else
-        new Redis::Client.new
+        @redis = Redis::Client.new
       end
     end
 
