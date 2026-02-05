@@ -2,6 +2,9 @@ require "redis"
 
 module Defense
   class RedisStore < Store
+    def initialize(@redis : Redis::Client)
+    end
+
     def initialize(url : String? = nil)
       if !url.nil?
         @redis = Redis::Client.new(URI.parse(url))
