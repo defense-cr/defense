@@ -2,7 +2,7 @@ version: 2.0
 shards:
   ameba:
     git: https://github.com/crystal-ameba/ameba.git
-    version: 1.5.0
+    version: 1.7.0
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
@@ -10,5 +10,5 @@ shards:
 
   redis:
     git: https://github.com/jgaskins/redis.git
-    version: 0.15.1
+    version: 0.15.3
 

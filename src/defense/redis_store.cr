@@ -18,9 +18,9 @@ module Defense
     def increment(unprefixed_key : String, expires_in : Int32) : Int64
       key = prefix_key(unprefixed_key)
 
-      @redis.multi do |r|
-        r.incr(key)
-        r.expire(key, expires_in)
+      @redis.multi do |red|
+        red.incr(key)
+        red.expire(key, expires_in)
       end.as(Array).first.as(Int64)
     end
 
@@ -28,7 +28,7 @@ module Defense
       @redis.exists(prefix_key(unprefixed_key)) == 1
     end
 
-    def read(unprefixed_key : String) : Int64 | Nil
+    def read(unprefixed_key : String) : Int64?
       @redis.get(prefix_key(unprefixed_key)).try(&.to_i64)
     end
 
