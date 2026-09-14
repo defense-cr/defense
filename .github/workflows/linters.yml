@@ -27,7 +27,13 @@ jobs:
           restore-keys: ${{ runner.os }}-shards-
 
       - name: Install shards
-        run: shards update
+        run: shards install
+
+      - name: Set up bin dir
+        run: mkdir -p bin
+
+      - name: Build ameba
+        run: crystal build -o bin/ameba lib/ameba/bin/ameba.cr
 
       - name: Run linter
         run: bin/ameba

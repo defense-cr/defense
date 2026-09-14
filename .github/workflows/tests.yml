@@ -37,7 +37,7 @@ jobs:
           restore-keys: ${{ runner.os }}-shards-
 
       - name: Install shards
-        run: shards update
+        run: shards install
 
       - name: Run tests
         run: crystal spec --verbose

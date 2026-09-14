@@ -305,6 +305,18 @@ Format the code:
 crystal tool format
 ```
 
+Build ameba:
+
+```
+crystal build -o bin/ameba lib/ameba/bin/ameba.cr
+```
+
+Run ameba:
+
+```
+bin/ameba
+```
+
 ### Guidelines
 
 - Keep the public interface small. Anything that doesn't have to be public, should explicitly be marked as protected or

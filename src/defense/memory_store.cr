@@ -23,7 +23,7 @@ module Defense
       @data.has_key?(key) && @data[key]["expires_at"] > Time.utc.to_unix_ms
     end
 
-    def read(unprefixed_key : String) : Int64 | Nil
+    def read(unprefixed_key : String) : Int64?
       if exists?(unprefixed_key)
         @data[prefix_key(unprefixed_key)]["count"]
       end
